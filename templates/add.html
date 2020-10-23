@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<p>To Do リストを追加してください！</p>
+<form action="/add" method="post">
+    <input type="text" name="task">
+    <input type="submit" name="save" value="送信">
+</form>
+
+{% endblock %}
