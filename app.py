@@ -80,6 +80,47 @@ def task_list():
         task_list=task_list,
         user_name=user_name)
 
+@app.route('/edit/<int:id>')
+def edit(id):
+    conn = sqlite3.connect('flasktest.db')
+    c = conn.cursor()
+    c.execute("SELECT task FROM task WHERE id = ?",(id,))
+    task = c.fetchone()
+    c.close()
+    if task is not None:
+        task = task[0]
+    else:
+        return "指定したたすくがありません！"
+    item={"id":id,"task":task}
+    return render_template('edit.html',task = item)
+
+@app.route('/edit',methods=['POST'])
+def edit_post():
+    item_id = request.form.get("html_task_id")
+    # INPUTタグはテキスト型なので、INT方に直しています。
+    item_id = int(item_id)
+    task = request.form.get("html_task")
+
+    conn = sqlite3.connect('flasktest.db')
+    c = conn.cursor()
+    c.execute("UPDATE task SET task = ? WHERE id = ?",(task,item_id))
+    conn.commit()
+    c.close()
+    return redirect('/list')
+
+@app.route('/del/<int:id>')
+def task_del(id):
+    conn = sqlite3.connect('flasktest.db')
+    c = conn.cursor()
+    c.execute("DELETE FROM task WHERE id = ?",(id,))
+    conn.commit()
+    c.close()
+    return redirect('/list')
+
+@app.errorhandler(404)
+def notfound(code):
+    return "404ページだよ。ごめんね"
+
     # flaskが持っている開発用のサーバーを起動する。
 if __name__ == '__main__':
     app.run(debug=True)
