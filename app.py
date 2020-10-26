@@ -117,6 +117,23 @@ def task_del(id):
     c.close()
     return redirect('/list')
 
+@app.route('/regist')
+def regist_get():
+    return render_template('regist.html')
+
+@app.route('/regist',methods=['POST'])
+def regist_post():
+    name = request.form.get("member_name")
+    print(name)
+    password = request.form.get("member_password")
+    print(password)
+    conn = sqlite3.connect('flasktest.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO member VALUES(null,?,?)",(name,password))
+    conn.commit()
+    c.close()
+    return "登録完了(๑>◡<๑)"
+
 @app.errorhandler(404)
 def notfound(code):
     return "404ページだよ。ごめんね"
